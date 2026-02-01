@@ -1,0 +1,159 @@
+openapi: 3.0.1
+info:
+  title: Agent 4 - Semantic Employee Search
+  description: Vector search microservice for employee intelligence. Designed for
+    Watsonx Orchestrate.
+  version: 1.0.0
+servers:
+- url: https://agent4.25rzrg3n3gow.us-south.codeengine.appdomain.cloud
+  description: Production Server
+paths:
+  /:
+    get:
+      summary: Health Check
+      description: Health check endpoint to verify service status.
+      operationId: health_check
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: HealthCheckResponse
+  /search:
+    post:
+      summary: Search for Employees
+      description: |-
+        Search for employees matching a natural language job description or query.
+        Returns a list of top matching candidates with relevance scores.
+      operationId: search_employees
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /profile/{employee_id}:
+    get:
+      summary: Get Employee Profile
+      description: |-
+        Fetch detailed profile information for a specific employee by their ID.
+        Includes skills, contribution summary, and raw record data.
+      operationId: get_employee_profile
+      parameters:
+      - name: employee_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Employee Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ProfileResponse:
+      properties:
+        employee_id:
+          type: string
+          title: Employee Id
+        summary:
+          type: string
+          title: Summary
+        skills:
+          items:
+            type: string
+          type: array
+          title: Skills
+        raw_doc:
+          title: Raw Doc
+          type: object
+          nullable: true
+          additionalProperties: true
+      type: object
+      required:
+      - employee_id
+      - summary
+      - skills
+      title: ProfileResponse
+    SearchRequest:
+      properties:
+        role_description:
+          type: string
+          title: Role Description
+          description: Job description to search for matching employees
+        top_k:
+          type: integer
+          maximum: 50.0
+          minimum: 1.0
+          title: Top K
+          description: Number of top matches to return
+          default: 5
+      type: object
+      required:
+      - role_description
+      title: SearchRequest
+    SearchResponse:
+      properties:
+        matches:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Matches
+      type: object
+      required:
+      - matches
+      title: SearchResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            type: string
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

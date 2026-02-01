@@ -14,8 +14,7 @@ app = FastAPI(
     version="1.0.0",
     servers=[
         {"url": "http://localhost:8000", "description": "Local Development Server"},
-        # You can add your production URL here
-        # {"url": "https://agent4-app.123456.us-south.codeengine.appdomain.cloud", "description": "Production Server"}
+        {"url": "https://agent4.25rzrg3n3gow.us-south.codeengine.appdomain.cloud", "description": "Production Server"}
     ]
 )
 

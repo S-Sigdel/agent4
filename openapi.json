@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.0.1",
   "info": {
     "title": "Agent 4 - Semantic Employee Search",
     "description": "Vector search microservice for employee intelligence. Designed for Watsonx Orchestrate.",
@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8000",
-      "description": "Local Development Server"
+      "url": "https://agent4.25rzrg3n3gow.us-south.codeengine.appdomain.cloud",
+      "description": "Production Server"
     }
   ],
   "paths": {
@@ -22,7 +22,10 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "object",
+                  "title": "HealthCheckResponse"
+                }
               }
             }
           }
@@ -142,16 +145,10 @@
             "title": "Skills"
           },
           "raw_doc": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Raw Doc"
+            "title": "Raw Doc",
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
           }
         },
         "type": "object",
@@ -205,14 +202,7 @@
         "properties": {
           "loc": {
             "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
+              "type": "string"
             },
             "type": "array",
             "title": "Location"
